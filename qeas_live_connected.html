@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QEAS AI Calculator</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+        h2 { color: #222; }
+        .container { background: #fff; padding: 20px; border-radius: 10px; width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input[type="number"], input[type="email"] { width: 100%; padding: 8px; margin: 10px 0; }
+        button { padding: 10px; background: black; color: white; border: none; width: 100%; border-radius: 5px; }
+        #result { margin-top: 20px; font-weight: bold; color: green; }
+        footer { text-align: center; margin-top: 30px; font-size: 12px; color: #777; }
+        label span { font-size: 11px; color: #555; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>QEAS Score Calculator</h2>
+        <form id="qeasForm">
+            <label>Emotional State (0–3)<span>0 = Numb / Depressed, 3 = Peaceful / Joyful</span></label>
+            <input type="number" step="0.1" name="emotional_state" required>
+            <label>Lifestyle Risk (0–3)<span>0 = Calm, 3 = Extreme stress / addiction</span></label>
+            <input type="number" step="0.1" name="lifestyle_risk" required>
+            <label>Social Alignment (0–3)<span>0 = Isolation, 3 = Strong family or social bonds</span></label>
+            <input type="number" step="0.1" name="social_alignment" required>
+            <label>Spiritual Frequency (0–3)<span>0 = None, 3 = High (prayer, meditation, devotion)</span></label>
+            <input type="number" step="0.1" name="spiritual_frequency" required>
+            <label>Health Behavior (0–3)<span>0 = Very unhealthy, 3 = Very healthy</span></label>
+            <input type="number" step="0.1" name="health_behavior" required>
+            <label>Dominant Archetype (0–3)<span>0 = Victim, 3 = Warrior / Visionary</span></label>
+            <input type="number" step="0.1" name="dominant_archetype" required>
+            <label>Your Email (optional)</label>
+            <input type="email" name="user_email">
+            <button type="submit">Calculate QEAS Score</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <footer>
+        Powered by <strong>Badru Michael Oluwarotimi</strong> | Founder of Spiritualectics<br>
+        © 2025 All Rights Reserved
+    </footer>
+
+    <script>
+        document.getElementById("qeasForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                emotional_state: parseFloat(form.emotional_state.value),
+                lifestyle_risk: parseFloat(form.lifestyle_risk.value),
+                social_alignment: parseFloat(form.social_alignment.value),
+                spiritual_frequency: parseFloat(form.spiritual_frequency.value),
+                health_behavior: parseFloat(form.health_behavior.value),
+                dominant_archetype: parseFloat(form.dominant_archetype.value),
+            };
+
+            document.getElementById("result").innerText = "Processing... please wait";
+
+            try {
+                const response = await fetch("https://qeas-ai-system.onrender.com/qeas/score", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "spiritualectics2025"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error("API error: " + response.status);
+                }
+
+                const result = await response.json();
+                document.getElementById("result").innerText = 
+                    "QEAS Score: " + result.qeas_score + " | " + result.signature;
+            } catch (error) {
+                document.getElementById("result").innerText = "Error: " + error.message + ". If this is the first request, wait 30–60 seconds and try again.";
+            }
+        });
+    </script>
+</body>
+</html>
