@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TMD-AI v6 Forecast Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 { text-align: center; }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 4px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 25px;
+      padding: 12px;
+      background: #0066cc;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+    }
+    #forecast-result {
+      margin-top: 25px;
+      font-size: 18px;
+      background: #222;
+      padding: 20px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TMD-AI v6 Forecast Tool</h1>
+  <form id="forecast-form">
+    <label>Energetic Integrity (0.0 = Collapse → 5.0 = Fully Vibrant)</label><p style="font-size:small;">0 = Collapse, 1 = Critically Weak, 2 = Below Average, 3 = Stable, 4 = Strong, 5 = Fully Vibrant</p>
+    <input type="number" step="0.1" id="energetic_integrity" required>
+
+    <label>Emotional Instability (0.0 = Fully Stable → 5.0 = Chaotic)</label><p style="font-size:small;">0 = Fully Stable, 1 = Slightly Unbalanced, 2 = Reactive, 3 = Volatile, 4 = Disturbed, 5 = Chaotic</p>
+    <input type="number" step="0.1" id="emotional_instability" required>
+
+    <label>Symbolic Density (0.0 = Ordinary → 5.0 = Deeply Fate-Laden)</label><p style="font-size:small;">0 = Ordinary, 1 = Somewhat Symbolic, 2 = Marked by Patterns, 3 = Highly Meaningful, 4 = Mythic or Iconic, 5 = Deeply Fate-Laden</p>
+    <input type="number" step="0.1" id="symbolic_density" required>
+
+    <label>Spiritual Polarity</label>
+    <select id="spiritual_polarity">
+      <option>Positive</option>
+      <option>Negative</option>
+    </select>
+
+    <label>Dominant Emotion</label>
+    <select id="dominant_emotion">
+      <option>Fear</option><option>Shame</option><option>Sadness</option><option>Anger</option>
+      <option>Joy</option><option>Peace</option><option>Guilt</option>
+    </select>
+
+    <label>Archetype</label>
+    <select id="archetype">
+      <option>The Rebel</option><option>The Martyr</option><option>The Lost</option><option>The Leader</option>
+    </select>
+
+    <label>Location Risk Zone</label>
+    <select id="location_risk">
+      <option>Safe Zone</option>
+      <option>Conflict Zone</option>
+      <option>High Crime Area</option>
+    </select>
+
+    <label>Final Event Imprint (describe briefly)</label><p style="font-size:small;">Example: “Loss of brother,” “Betrayal,” “Car accident,” “Failed project,” “Firing,” etc.</p>
+    <input type="text" id="event_imprint">
+
+    <label>Subconscious Guilt Load (0.0 = No Guilt → 5.0 = Overwhelming Burden)</label><p style="font-size:small;">0 = No guilt, 1 = Minimal guilt, 2 = Some regret, 3 = Noticeable weight, 4 = Heavy burden, 5 = Overwhelming subconscious guilt</p>
+    <input type="number" step="0.1" id="guilt_load" required>
+
+    <label>Public Perception Field</label>
+    <select id="public_perception">
+      <option>Loved</option>
+      <option>Misunderstood</option>
+      <option>Infamous</option>
+    </select>
+
+    <label>Recurring Dream Symbol</label>
+    <select id="dream_symbol">
+      <option>War</option>
+      <option>Falling</option>
+      <option>Water</option>
+      <option>Fire</option>
+    </select>
+
+    <label>Karmic Loop Detected?</label>
+    <select id="karmic_loop">
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+
+    <button type="submit">Generate Forecast</button>
+  </form>
+
+  <div id="forecast-result"></div>
+
+  <script>
+    // Auto wake Render backend
+    fetch("https://tmd-ai-v6.onrender.com/tmd-v6-forecast/", { method: "GET" });
+
+    document.getElementById("forecast-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = {
+        energetic_integrity: parseFloat(document.getElementById("energetic_integrity").value),
+        emotional_instability: parseFloat(document.getElementById("emotional_instability").value),
+        symbolic_density: parseFloat(document.getElementById("symbolic_density").value),
+        spiritual_polarity: document.getElementById("spiritual_polarity").value,
+        dominant_emotion: document.getElementById("dominant_emotion").value,
+        archetype: document.getElementById("archetype").value,
+        location_risk: document.getElementById("location_risk").value,
+        event_imprint: document.getElementById("event_imprint").value,
+        guilt_load: parseFloat(document.getElementById("guilt_load").value),
+        public_perception: document.getElementById("public_perception").value,
+        dream_symbol: document.getElementById("dream_symbol").value,
+        karmic_loop: document.getElementById("karmic_loop").value
+      };
+
+      fetch("https://tmd-ai-v6.onrender.com/tmd-v6-forecast/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({...data, api_signature: "TMD_SECRET_KEY_2025"})
+      })
+      .then(res => res.json())
+      .then(result => {
+        document.getElementById("forecast-result").innerText = JSON.stringify(result, null, 2);
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("forecast-result").innerText = "Error generating forecast.";
+      });
+    });
+  </script>
+</body>
+</html>
